@@ -1,5 +1,5 @@
 import pytest
-from range import *
+from genetic_algorithm.range import *
 import math
 
 class TestLinearRange:

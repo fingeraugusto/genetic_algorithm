@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from itertools import zip_longest
-from individual import Individual
+from .individual import Individual
 from typing import List, Tuple
 import random
 

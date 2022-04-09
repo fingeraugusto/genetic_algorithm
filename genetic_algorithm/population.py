@@ -1,9 +1,9 @@
-from individual import Individual
-from range import *
-from selector import *
-from crossover import *
-from mutator import *
-from stall import *
+from .individual import Individual
+from .range import *
+from .selector import *
+from .crossover import *
+from .mutator import *
+from .stall import *
 from math import inf
 from typing import Callable, List, Dict
 

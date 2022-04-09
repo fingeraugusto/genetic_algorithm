@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
-from individual import LOWER_GENE, UPPER_GENE
+from .individual import LOWER_GENE, UPPER_GENE
 import math
 
 class BaseRange(ABC):

@@ -1,7 +1,6 @@
 import pytest
 from typing import List
-from population import *
-from range import *
+from genetic_algorithm.population import *
 
 
 def test_save_1(tmp_path):

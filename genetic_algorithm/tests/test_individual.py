@@ -1,5 +1,5 @@
 import pytest
-from individual import *
+from genetic_algorithm.individual import *
 
 class TestIndividual:
     

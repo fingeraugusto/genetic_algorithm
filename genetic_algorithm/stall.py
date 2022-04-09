@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import math
-from individual import Individual
+from .individual import Individual
 from typing import List
 
 class BaseStallControl(ABC):

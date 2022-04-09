@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from individual import Individual, UPPER_GENE
+from .individual import Individual, UPPER_GENE
 import random  
 from typing import Callable, List
-from utils import generate_random_number
+from .utils import generate_random_number
 
 class BaseMutator(ABC):
     """Framework to model mutators handlers"""
