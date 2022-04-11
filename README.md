@@ -58,5 +58,5 @@ The current available models, starting with the default, are:
 - pop_selector -> **selector.BestIndividualSelector**
 - stall -> **stall.GenerationStallControl**
 
-There are plnas to add more models as well as a custom save/load/print model. Additionally, a separation between the population and parents will be performed.
+There are plans to add more models as well as a custom save/load/print model. Additionally, a separation between the population and parents will be performed.
  
