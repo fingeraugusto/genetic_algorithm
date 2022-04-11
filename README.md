@@ -11,7 +11,7 @@ The basic example requires only the definition of a callable fitness function as
 
 ```python
 from genetic_algorithm import *
-my_pop = Populatiion(num_of_genes, num_of_individuals, fitness_function)
+my_pop = Population(num_of_genes, num_of_individuals, fitness_function)
 fit_value, best_values, genes = my_pop.evolve(num_of_generations)
 ```
 
