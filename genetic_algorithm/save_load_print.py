@@ -9,11 +9,19 @@ from typing import Dict, List
 class BaseSaveLoadPrint(ABC):
     @abstractmethod
     def init_log(self, list_of_individuals: List[Individual], log_file: str ="", log_config: Dict[str, str] = {}) -> Individual:
-        ...
+        raise NotImplementedError
 
     @abstractmethod
     def update_log(self, gen: int, max_gen: int,  list_of_individuals: List[Individual]) -> None:
-        ...
+        raise NotImplementedError
+    
+    @abstractmethod
+    def save_to_log(self, ind: Individual) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def load_from_log(self) -> Individual:
+        raise NotImplementedError
 
 
 class DefaultLog(BaseSaveLoadPrint):
