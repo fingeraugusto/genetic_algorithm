@@ -5,6 +5,7 @@ from .population_selector import *
 from .crossover import *
 from .mutator import *
 from .stall import *
+from .save_load_print import DefaultLog
 from math import inf
 from typing import Callable, List, Dict
 
@@ -26,6 +27,7 @@ class Population:
         self.__mutator = AllRandom()
         self.__pop_selector = BestIndividualSelector()
         self.__stall = GenerationStallControl()
+        self.__log = DefaultLog()
         self.log = {"print": True,
                     "gen_freq": 100,
                     "time_freq": 15,
@@ -44,7 +46,8 @@ class Population:
                         crossover: BaseCrossover = None,
                         mutator: BaseMutator = None,
                         pop_selector: BasePopulationSelector = None,
-                        stall: BaseStallControl = None
+                        stall: BaseStallControl = None,
+                        log: DefaultLog = None
                     ) -> None:
         if parent_selector:
             self.__parent_selector = parent_selector
@@ -55,61 +58,34 @@ class Population:
         if pop_selector:
             self.__pop_selector = pop_selector
         if stall:
-            self.__stall
+            self.__stall = stall
+        if log:
+            self.__log = log
 
     def set_range(self, new_range: Dict[int, BaseRange]) -> None:
         """ Accepted the str(gen_index) as the name parameter and a Range object as value. """
         self.__range.update(new_range)
     
-    def convert_individual_to_str(self, ind: Individual) -> str:
-        """ Return the representation of the individual with the real values. Use for save and load."""
-        ind_str = f"fit:{ind.fit():10.4e},real_gen:"
-        return ind_str + ",".join([f"{r}" for r in self.get_real_from_genes(ind.genes())])
+    def get_range_dict(self) -> Dict[int, BaseRange]:
+        return self.__range
     
-    def convert_str_to_individual(self, parsed_str: str) -> Individual:
-        if not parsed_str:
-            return Individual(self.num_of_genes)
-        _ , real_genes = parsed_str.split("real_gen:")
-        real_genes = [float(x) for x in real_genes.split(",")]
-        return Individual(self.num_of_genes, list_of_genes=self.get_genes_from_real(real_genes))
-        
+    def init_log(self) -> None:
+        self.pop[0] = self.__log.init_log(self.pop, self.log, self.__range)
+
+    def update_log(self, cur_gen: int, max_gen: int) -> None:
+        self.__log.update_log(cur_gen, max_gen, self.pop)
+
     def save_to_log(self) -> None:
-        if "log_path" in self.log:
-            with open(self.log["log_path"], "a") as f:
-                f.write(self.convert_individual_to_str(self.pop[0]))
+        self.__log.save_to_log(self.pop[0])
 
     def load_from_log(self) -> None:
-        """Try to load a log file with a solution. If it succeeds, set the first individual with the genes loaded. """
-        if "log_path" in self.log:
-            last_entry = ""
-            with open(self.log["log_path"], "r") as f:
-                all_lines = f.readlines()
-                for i in range(-1, -(len(all_lines)+1), -1):
-                    last_entry = all_lines[i].strip(" \n\r")
-                    if last_entry:
-                        break
-            self.pop[0] = self.convert_str_to_individual(last_entry)
-
-    def print_log(self, n_gen: int, max_gen: int) -> None:
-        if self.log["print"]:
-            if n_gen == 0:
-                print("======================================================================")
-                print(" Start the evolution\n\n")
-            else:
-                if n_gen%self.log["gen_freq"] == 0:
-                    print("======================================================================")
-                    print(f" gen: {n_gen:<8}|| progress: {100*(n_gen/max_gen):3.2f}% " + 
-                            f"|| cur_best: {self.pop[0].fit():10.2E} "+
-                            f"|| cur_avg: {sum([x.fit() for x in self.pop]) / self.num_individuals:10.2E}")
-
-    def get_real_from_genes(self, list_of_genes: List[float]) -> List[float]:
-        return [self.__range[i].get_real_from_gene(gen) for i, gen in enumerate(list_of_genes)]
+        self.pop[0] = self.__log.load_from_log()
     
     def get_genes_from_real(self, list_of_real: List[float]) -> List[float]:
         return [self.__range[i].get_gene_from_real(real) for i, real in enumerate(list_of_real)]
 
     def calculate_fitness(self, ind: Individual) -> None:
-        fit = self.fitness_fun(self.get_real_from_genes(ind.genes()))
+        fit = self.fitness_fun(get_real_from_genes(ind.genes(), self.__range))
         ind.set_fit_value(fit)
 
     def calculate_all_fitness(self, pop: List[Individual]) -> None:
@@ -135,8 +111,7 @@ class Population:
     def evolve(self, max_generations: int, target: float = 0.0) -> Tuple[float, List[float], List[float]]:
         """Return a tuple containing (fitness_value, real_genes_list, gene_list)"""
         cur_gen = 0
-        self.load_from_log()
-        self.print_log(cur_gen, max_generations)
+        self.init_log()
         self.calculate_all_fitness(self.pop)
 
         while cur_gen < max_generations:
@@ -146,14 +121,13 @@ class Population:
             self.mutate(children_pop)
             self.calculate_all_fitness(children_pop)
             self.select_next_pop(children_pop)
-            self.save_to_log()
-            self.print_log(cur_gen, max_generations)
+            self.update_log(cur_gen, max_generations)
             cur_gen = self.stall_control(cur_gen, max_generations)
             # to ensure all individulas have been evaluated
             self.calculate_all_fitness(self.pop)
 
             if self.pop[0].fit() <= target:
-                return (self.pop[0].fit(), self.get_real_from_genes(self.pop[0].genes()), self.pop[0].genes())
+                return (self.pop[0].fit(), get_real_from_genes(self.pop[0].genes(), self.__range), self.pop[0].genes())
 
-        return (self.pop[0].fit(), self.get_real_from_genes(self.pop[0].genes()), self.pop[0].genes())
+        return (self.pop[0].fit(), get_real_from_genes(self.pop[0].genes(), self.__range), self.pop[0].genes())
 

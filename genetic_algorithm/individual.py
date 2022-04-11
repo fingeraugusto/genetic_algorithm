@@ -62,6 +62,9 @@ class Individual:
             return DEFAULT_FIT
         return self.__fit
 
+    def get_num_of_genes(self) -> int:
+        return self.__num_of_genes
+
     def gene(self, gene_index: int) -> float:
         return self.__list_of_genes[gene_index]
 

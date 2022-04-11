@@ -27,3 +27,4 @@ genetic_algorithm/__pycache__/range.cpython-310.pyc
 genetic_algorithm/__pycache__/selector.cpython-310.pyc
 genetic_algorithm/__pycache__/stall.cpython-310.pyc
 genetic_algorithm/__pycache__/utils.cpython-310.pyc
+genetic_algorithm/__pycache__/save_load_print.cpython-310.pyc

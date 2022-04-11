@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import Tuple, List, Dict
 from .individual import LOWER_GENE, UPPER_GENE
 import math
 
@@ -67,3 +67,11 @@ class NegativeExponentialRange(BaseRange):
             return self.__linear_helper_negative.get_gene_from_real(math.log(- real_value, self.base))
         else:
             raise Exception("A zero real value was found for a NegativeExponentialRange.")
+
+
+def get_real_from_genes(list_of_genes: List[float], range_dict: Dict[int, BaseRange]) -> List[float]:
+        return [range_dict[i].get_real_from_gene(gen) for i, gen in enumerate(list_of_genes)]
+    
+
+def get_genes_from_real(list_of_real: List[float], range_dict: Dict[int, BaseRange]) -> List[float]:
+    return [range_dict[i].get_gene_from_real(real) for i, real in enumerate(list_of_real)]

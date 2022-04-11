@@ -1,16 +1,19 @@
 import pytest
 from typing import List
 from genetic_algorithm.population import *
+from genetic_algorithm.range import get_real_from_genes
 
 
 def test_save_1(tmp_path):
     log_file = tmp_path / "mydir/log_file.txt"
     log_file.parent.mkdir() 
+    log_file.touch()
 
     n_genes = 3
     n_ind = 100
     my_pop = Population(n_genes, n_ind, None)
     my_pop.set_log_file(str(log_file))
+    my_pop.init_log()
     my_pop.pop[0].set_all_genes([0.12345,0.23456,0.0])
     my_pop.pop[0].set_fit_value(123456.1)
     my_pop.save_to_log()
@@ -30,9 +33,9 @@ def test_load_1(tmp_path):
     my_pop = Population(n_genes, n_ind, None)
     my_pop.set_range({0:LinearRange(-10.0, 10.0), 1:LinearRange(-10.0, 10.0), 2:LinearRange(-10.0, 10.0)})
     my_pop.set_log_file(str(log_file))
-    my_pop.load_from_log()
+    my_pop.init_log()
 
-    aux = my_pop.get_real_from_genes(my_pop.pop[0].genes())
+    aux = get_real_from_genes(my_pop.pop[0].genes(), my_pop.get_range_dict())
     aux[0] = round(aux[0],1)
     aux[1] = round(aux[1],5)
     aux[2] = round(aux[2],5)
@@ -49,9 +52,9 @@ def test_load_2(tmp_path):
     my_pop = Population(n_genes, n_ind, None)
     my_pop.set_range({0:LinearRange(-10.0, 10.0), 1:LinearRange(-10.0, 10.0), 2:LinearRange(-10.0, 10.0)})
     my_pop.set_log_file(str(log_file))
-    my_pop.load_from_log()
+    my_pop.init_log()
 
-    aux = my_pop.get_real_from_genes(my_pop.pop[0].genes())
+    aux = get_real_from_genes(my_pop.pop[0].genes(), my_pop.get_range_dict())
     aux[0] = round(aux[0],1)
     aux[1] = round(aux[1],5)
     aux[2] = round(aux[2],5)
@@ -68,9 +71,9 @@ def test_load_3(tmp_path):
     my_pop = Population(n_genes, n_ind, None)
     my_pop.set_range({0:LinearRange(-10.0, 10.0), 1:LinearRange(-10.0, 10.0), 2:LinearRange(-10.0, 10.0)})
     my_pop.set_log_file(str(log_file))
-    my_pop.load_from_log()
+    my_pop.init_log()
 
-    aux = my_pop.get_real_from_genes(my_pop.pop[0].genes())
+    aux = get_real_from_genes(my_pop.pop[0].genes(), my_pop.get_range_dict())
     aux[0] = round(aux[0],1)
     aux[1] = round(aux[1],5)
     aux[2] = round(aux[2],5)
@@ -87,9 +90,10 @@ def test_load_4(tmp_path):
     my_pop = Population(n_genes, n_ind, None)
     my_pop.set_range({0:LinearRange(-10.0, 10.0), 1:LinearRange(-10.0, 10.0), 2:LinearRange(-10.0, 10.0)})
     my_pop.set_log_file(str(log_file))
-    my_pop.load_from_log()
+    my_pop.init_log()
 
-    aux = my_pop.get_real_from_genes(my_pop.pop[0].genes())
+    # assert my_pop.pop[0].genes() ==  my_pop.get_range_dict()
+    aux = get_real_from_genes(my_pop.pop[0].genes(), my_pop.get_range_dict())
     aux[0] = round(aux[0],1)
     aux[1] = round(aux[1],5)
     aux[2] = round(aux[2],5)
