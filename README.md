@@ -52,10 +52,10 @@ my_pop.set_models(parent_selector: BaseParentsSelector = None,
 ```
 
 The current available models, starting with the default, are:
-- parent_selector -> **selector.KTournamentParentSelector**
+- parent_selector -> **parent_selector.KTournamentParentSelector**
 - crossover -> **crossover.RandomCrossover**, crossover.SBXCrossover
 - mutator -> **mutator.AllRandom**
-- pop_selector -> **selector.BestIndividualSelector**
+- pop_selector -> **population_selector.BestIndividualSelector**
 - stall -> **stall.GenerationStallControl**
 
 There are plans to add more models as well as a custom save/load/print model. Additionally, a separation between the population and parents will be performed.
