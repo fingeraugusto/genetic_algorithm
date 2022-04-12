@@ -90,3 +90,5 @@ class Individual:
         self.__require_update = False
     
 
+def create_list_of_random_individuals(number_of_ind: int, number_of_genes: int, reverse: bool = False) -> List[Individual]:
+    return [Individual(number_of_genes, reverse=reverse) for _ in range(number_of_ind)]

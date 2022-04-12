@@ -75,3 +75,38 @@ def get_real_from_genes(list_of_genes: List[float], range_dict: Dict[int, BaseRa
 
 def get_genes_from_real(list_of_real: List[float], range_dict: Dict[int, BaseRange]) -> List[float]:
     return [range_dict[i].get_gene_from_real(real) for i, real in enumerate(list_of_real)]
+
+
+def create_range_from_str(range_str: str) -> Dict[int, BaseRange]:
+    """
+    Use it to inject the correct range without having to create the objects.
+    the pattern follows:
+    <index>:<type>(<lower>;<upper>;<optional>)
+    separe each pattern with a comma.
+
+    types:  L or l (linear, optional is ignored)
+            E or e (exponential, if there is an optional, set the base=optional)
+            N or n (negativeExponential, if there is an optional, set the base=optional)
+    """
+    range_dict = {}
+    all_patterns = range_str.split(",")
+    for p in all_patterns:
+        g_idx, all_param = p.split(":")
+        r_type, all_param = all_param[:,-1].split("(")
+        all_param = all_param.split(";")
+        new_range = None
+        if r_type.lower() == "l":
+            new_range = LinearRange(float(all_param[0], all_param[1]))
+        elif r_type.lower() == "e":
+            new_range = ExponentialRange(float(all_param[0], all_param[1]))
+            if len(all_param == 3):
+                new_range.base = float(all_param[2])
+        elif r_type.lower() == "n":
+            new_range = NegativeExponentialRange(float(all_param[0], all_param[1]))
+            if len(all_param == 3):
+                new_range.base = float(all_param[2])
+        if new_range:
+            range_dict[int(g_idx)] = new_range
+    return range_dict
+            
+

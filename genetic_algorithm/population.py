@@ -1,17 +1,13 @@
-from .individual import Individual
-from .range import *
-from .parent_selector import *
-from .population_selector import *
-from .crossover import *
-from .mutator import *
-from .stall import *
+from .individual import Individual, create_list_of_random_individuals
+from .range import BaseRange, LinearRange, get_real_from_genes ,create_range_from_str
+from .parent_selector import BaseParentsSelector, KTournamentParentSelector
+from .population_selector import BasePopulationSelector, BestIndividualSelector
+from .crossover import BaseCrossover, RandomCrossover
+from .mutator import BaseMutator, AllRandom
+from .stall import BaseStallControl, GenerationStallControl
 from .save_load_print import DefaultLog
 from math import inf
-from typing import Callable, List, Dict
-
-
-def create_list_of_random_individuals(number_of_ind: int, number_of_genes: int, reverse: bool = False) -> List[Individual]:
-    return [Individual(number_of_genes, reverse=reverse) for _ in range(number_of_ind)]
+from typing import Callable, List, Dict, Tuple
 
 
 class Population:
@@ -39,9 +35,6 @@ class Population:
         if self.log["log_path"][-4:] != ".txt":
             self.log["log_path"] += ".txt"
 
-    def set_parent_selector(self, new_model: BaseParentsSelector) -> None:
-        self.__parent_selector = new_model
-
     def set_models(self, parent_selector: BaseParentsSelector = None,
                         crossover: BaseCrossover = None,
                         mutator: BaseMutator = None,
@@ -62,9 +55,16 @@ class Population:
         if log:
             self.__log = log
 
-    def set_range(self, new_range: Dict[int, BaseRange]) -> None:
-        """ Accepted the str(gen_index) as the name parameter and a Range object as value. """
+    def set_range_from_dict(self, new_range: Dict[int, BaseRange]) -> None:
+        """ gen_index:BaseRange """
         self.__range.update(new_range)
+    
+    def set_range_from_str(self, new_range: str) -> None:
+        """ str_pattern:
+        <index>:<type>(<lower>;<upper>;<optional>)
+        More details look into range.create_range_from_str function
+         """
+        self.set_range_from_dict(create_range_from_str(new_range))
     
     def get_range_dict(self) -> Dict[int, BaseRange]:
         return self.__range
